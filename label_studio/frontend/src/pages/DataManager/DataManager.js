@@ -8,6 +8,7 @@ import { Space } from '../../components/Space/Space';
 import { useAPI } from '../../providers/ApiProvider';
 import { useLibrary } from '../../providers/LibraryProvider';
 import { useProject } from '../../providers/ProjectProvider';
+import { useCurrentUser } from '../../providers/CurrentUser';
 import { useContextProps, useFixedLocation, useParams } from '../../providers/RoutesProvider';
 import { addAction, addCrumb, deleteAction, deleteCrumb } from '../../services/breadrumbs';
 import { Block, Elem } from '../../utils/bem';
@@ -36,7 +37,7 @@ const initializeDataManager = async (root, props, params) => {
     apiEndpoints: APIConfig.endpoints,
     interfaces: {
       import: true,
-      export: true,
+      export: params.user && params.user.is_superuser,
       backButton: false,
       labelingHeader: false,
       autoAnnotation: params.autoAnnotation,
@@ -61,6 +62,7 @@ export const DataManagerPage = ({ ...props }) => {
   const history = useHistory();
   const api = useAPI();
   const { project } = useProject();
+  const { user } = useCurrentUser();
   const LabelStudio = useLibrary('lsf');
   const DataManager = useLibrary('dm');
   const setContextProps = useContextProps();
@@ -86,6 +88,7 @@ export const DataManagerPage = ({ ...props }) => {
       props,
       {
         ...params,
+        user,
         project,
         autoAnnotation: isDefined(interactiveBacked),
       },
@@ -188,6 +191,7 @@ DataManagerPage.pages = {
 DataManagerPage.context = ({ dmRef }) => {
   const location = useFixedLocation();
   const { project } = useProject();
+  const { user } = useCurrentUser();
   const [mode, setMode] = useState(dmRef?.mode ?? "explorer");
 
   const links = {
@@ -256,7 +260,7 @@ DataManagerPage.context = ({ dmRef }) => {
         </Button>
       )}
 
-      {Object.entries(links).map(([path, label]) => (
+      {(user && user.is_superuser) && Object.entries(links).map(([path, label]) => (
         <Button
           key={path}
           tag={NavLink}

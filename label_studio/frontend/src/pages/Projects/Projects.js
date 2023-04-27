@@ -5,6 +5,7 @@ import { Button } from '../../components';
 import { Oneof } from '../../components/Oneof/Oneof';
 import { Spinner } from '../../components/Spinner/Spinner';
 import { ApiContext } from '../../providers/ApiProvider';
+import { useCurrentUser } from '../../providers/CurrentUser';
 import { useContextProps } from '../../providers/RoutesProvider';
 import { useAbortController } from "../../hooks/useAbortController";
 import { Block, Elem } from '../../utils/bem';
@@ -34,8 +35,11 @@ export const ProjectsPage = () => {
   const [modal, setModal] = React.useState(false);
   const openModal = setModal.bind(null, true);
   const closeModal = setModal.bind(null, false);
+  const { user } = useCurrentUser();
 
-  const fetchProjects = async (page  = currentPage, pageSize = defaultPageSize) => {
+  console.log('ProjectsPage', user);
+
+  const fetchProjects = async (page = currentPage, pageSize = defaultPageSize) => {
     setNetworkState('loading');
     abortController.renew(); // Cancel any in flight requests
 
@@ -46,10 +50,10 @@ export const ProjectsPage = () => {
         'id',
         'title',
         'created_by',
-        'created_at', 
-        'color', 
-        'is_published', 
-        'assignment_settings', 
+        'created_at',
+        'color',
+        'is_published',
+        'assignment_settings',
       ].join(',');
     }
 
@@ -57,7 +61,7 @@ export const ProjectsPage = () => {
       params: requestParams,
       ...(isFF(FF_DEV_2575) ? {
         signal: abortController.controller.current.signal,
-        errorFilter: (e) => e.error.includes('aborted'), 
+        errorFilter: (e) => e.error.includes('aborted'),
       } : null),
     });
 
@@ -69,7 +73,7 @@ export const ProjectsPage = () => {
       const additionalData = await api.callApi("projects", {
         params: { ids: data?.results?.map(({ id }) => id).join(','), page_size: pageSize },
         signal: abortController.controller.current.signal,
-        errorFilter: (e) => e.error.includes('aborted'), 
+        errorFilter: (e) => e.error.includes('aborted'),
       });
 
       if (additionalData?.results?.length) {
@@ -90,14 +94,14 @@ export const ProjectsPage = () => {
   React.useEffect(() => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 });
-  }, [projectsList.length]);
+    setContextProps({ openModal, showButton: projectsList.length > 0 && user && user.is_superuser });
+  }, [projectsList.length, user]);
 
   return (
     <Block name="projects-page">
       <Oneof value={networkState}>
         <Elem name="loading" case="loading">
-          <Spinner size={64}/>
+          <Spinner size={64} />
         </Elem>
         <Elem name="content" case="loaded">
           {projectsList.length ? (
@@ -107,11 +111,12 @@ export const ProjectsPage = () => {
               totalItems={totalItems}
               loadNextPage={loadNextPage}
               pageSize={defaultPageSize}
+              showSettings={user && user.is_superuser}
             />
           ) : (
-            <EmptyProjectsList openModal={openModal} />
+            <EmptyProjectsList openModal={openModal} showButton={user && user.is_superuser} />
           )}
-          {modal && <CreateProject onClose={closeModal} />}
+          {(modal && user.is_superuser) && <CreateProject onClose={closeModal} />}
         </Elem>
       </Oneof>
     </Block>
@@ -129,7 +134,7 @@ ProjectsPage.routes = ({ store }) => [
     component: () => {
       const params = useRouterParams();
 
-      return <Redirect to={`/projects/${params.id}/data`}/>;
+      return <Redirect to={`/projects/${params.id}/data`} />;
     },
     pages: {
       DataManagerPage,

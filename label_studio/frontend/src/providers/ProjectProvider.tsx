@@ -8,7 +8,7 @@ type Empty = Record<string, never>
 
 type Context = {
   project: APIProject | Empty,
-  fetchProject: (id?: string|number, force?: boolean) => Promise<APIProject | void>,
+  fetchProject: (id?: string | number, force?: boolean) => Promise<APIProject | void>,
   updateProject: (fields: APIProject) => Promise<WrappedResponse<APIProject>>,
   invalidateCache: () => void,
 }
@@ -53,7 +53,7 @@ export const ProjectProvider: React.FunctionComponent = ({ children }) => {
   const updateProject: Context['updateProject'] = useCallback(async (fields: APIProject) => {
     const result = await api.callApi<APIProject>('updateProject', {
       params: {
-        pk:projectData.id,
+        pk: projectData.id,
       },
       body: fields,
     });

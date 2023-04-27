@@ -45,7 +45,8 @@ class BaseUserSerializer(FlexFieldsModelSerializer):
             'initials',
             'phone',
             'active_organization',
-            'allow_newsletters'
+            'allow_newsletters',
+            'is_superuser',
         )
 
 

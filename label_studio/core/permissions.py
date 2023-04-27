@@ -57,6 +57,30 @@ def make_perm(name, pred, overwrite=False):
             return
     rules.add_perm(name, pred)
 
+superuser_permissions = [
+    all_permissions.organizations_create,
+    all_permissions.organizations_change,
+    all_permissions.organizations_delete,
+    all_permissions.organizations_invite,
+    all_permissions.projects_create,
+    all_permissions.projects_change,
+    all_permissions.projects_delete,
+    all_permissions.tasks_create,
+    all_permissions.tasks_change,
+    all_permissions.tasks_delete,
+    all_permissions.annotations_delete,
+    all_permissions.actions_perform,
+    all_permissions.predictions_any,
+    all_permissions.avatar_any,
+    all_permissions.labels_create,
+    all_permissions.labels_change,
+    all_permissions.labels_delete,
+]
+
 
 for _, permission_name in all_permissions:
-    make_perm(permission_name, rules.is_authenticated)
+    # print("Permission: %s" % permission_name, superuser_permissions)
+    if permission_name in superuser_permissions:
+        make_perm(permission_name, rules.is_superuser)
+    else:
+        make_perm(permission_name, rules.is_authenticated)

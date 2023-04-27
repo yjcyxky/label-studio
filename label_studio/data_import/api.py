@@ -9,6 +9,7 @@ import mimetypes
 
 
 from django.conf import settings
+from django.db.models import Subquery, OuterRef
 from django.db import transaction
 from django.http import HttpResponse
 from drf_yasg.utils import swagger_auto_schema
@@ -182,6 +183,17 @@ class ImportAPI(generics.CreateAPIView):
         return super(ImportAPI, self).post(*args, **kwargs)
 
     def _save(self, tasks):
+        # For publications we need to filter by pmid
+        pmids = map(lambda x: x.get('data', {}).get('pmid'), tasks)
+        filtered_pmids = list(filter(lambda x: x is not None, pmids))
+        if len(filtered_pmids) > 0:
+            duplicated_tasks = Task.objects.filter(data__pmid__in=filtered_pmids, project_id=self.kwargs['pk'])
+            duplicated_pmids = duplicated_tasks.values_list('data__pmid', flat=True)
+            logger.info('Duplicated tasks: {}'.format(duplicated_pmids))
+            tasks = list(filter(lambda x: x.get('data', {}).get('pmid') not in duplicated_pmids, tasks))
+        else:
+            logger.warn('No pmids found in tasks')
+
         serializer = self.get_serializer(data=tasks, many=True)
         serializer.is_valid(raise_exception=True)
         task_instances = serializer.save(project_id=self.kwargs['pk'])

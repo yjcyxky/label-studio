@@ -7,12 +7,12 @@ import { Button, Dropdown, Menu, Pagination, Userpic } from '../../components';
 import { Block, Elem } from '../../utils/bem';
 import { absoluteURL } from '../../utils/helpers';
 
-export const ProjectsList = ({ projects, currentPage, totalItems, loadNextPage, pageSize }) => {
+export const ProjectsList = ({ projects, currentPage, totalItems, loadNextPage, pageSize, showSettings }) => {
   return (
     <>
       <Elem name="list">
         {projects.map(project => (
-          <ProjectCard key={project.id} project={project}/>
+          <ProjectCard key={project.id} project={project} showSettings={showSettings} />
         ))}
       </Elem>
       <Elem name="pages">
@@ -31,18 +31,18 @@ export const ProjectsList = ({ projects, currentPage, totalItems, loadNextPage, 
   );
 };
 
-export const EmptyProjectsList = ({ openModal }) => {
+export const EmptyProjectsList = ({ openModal, showButton }) => {
   return (
     <Block name="empty-projects-page">
       <Elem name="heidi" tag="img" src={absoluteURL("/static/images/opossum_looking.png")} />
-      <Elem name="header" tag="h1">Heidi doesn’t see any projects here</Elem>
+      <Elem name="header" tag="h1">Doesn't see any projects here, please contact your administrator</Elem>
       <p>Create one and start labeling your data</p>
-      <Elem name="action" tag={Button} onClick={openModal} look="primary">Create Project</Elem>
+      { showButton && <Elem name="action" tag={Button} onClick={openModal} look="primary">Create Project</Elem> }
     </Block>
   );
 };
 
-const ProjectCard = ({ project }) => {
+const ProjectCard = ({ project, showSettings }) => {
   const color = useMemo(() => {
     return project.color === '#FFFFFF' ? null : project.color;
   }, [project]);
@@ -69,7 +69,10 @@ const ProjectCard = ({ project }) => {
             }}>
               <Dropdown.Trigger content={(
                 <Menu>
-                  <Menu.Item href={`/projects/${project.id}/settings`}>Settings</Menu.Item>
+                  {
+                    showSettings && 
+                    <Menu.Item href={`/projects/${project.id}/settings`}>Settings</Menu.Item>
+                  }
                   <Menu.Item href={`/projects/${project.id}/data?labeling=1`}>Label</Menu.Item>
                 </Menu>
               )}>

@@ -4,13 +4,14 @@ import { createBrowserHistory } from 'history';
 import React from 'react';
 import { render } from 'react-dom';
 import { Router } from 'react-router-dom';
-import { initSentry } from "../config/Sentry";
+// import { initSentry } from "../config/Sentry";
 import { ApiProvider } from '../providers/ApiProvider';
 import { AppStoreProvider } from '../providers/AppStoreProvider';
 import { ConfigProvider } from '../providers/ConfigProvider';
 import { LibraryProvider } from '../providers/LibraryProvider';
 import { MultiProvider } from '../providers/MultiProvider';
 import { ProjectProvider } from '../providers/ProjectProvider';
+import { CurrentUserProvider } from '../providers/CurrentUser';
 import { RoutesProvider } from '../providers/RoutesProvider';
 import './App.styl';
 import { AsyncPage } from './AsyncPage/AsyncPage';
@@ -25,7 +26,7 @@ const browserHistory = createBrowserHistory({
 
 window.LSH = browserHistory;
 
-initSentry(browserHistory);
+// initSentry(browserHistory);
 
 const App = ({content}) => {
   const libraries = {
@@ -51,6 +52,7 @@ const App = ({content}) => {
           <LibraryProvider key="lsf" libraries={libraries}/>,
           <RoutesProvider key="rotes"/>,
           <ProjectProvider key="project"/>,
+          <CurrentUserProvider key="current-user"/>,
         ]}>
           <AsyncPage>
             <RootPage content={content}/>

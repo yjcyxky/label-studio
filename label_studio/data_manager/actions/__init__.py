@@ -24,7 +24,7 @@ logger = logging.getLogger('django')
 def check_permissions(user, action):
     """ Actions must have permissions, if only one is in the user role then the action is allowed
     """
-    if 'permission' not in action:
+    if 'permission' not in action and not user.is_superuser:
         logger.error('Action must have "permission" field: %s', str(action))
         return False
 
