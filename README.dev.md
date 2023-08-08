@@ -25,3 +25,9 @@ python label_studio/manage.py collectstatic --no-input
 ```
 
 After that you can refresh the page and see the changes.
+
+### Build a production-ready Docker image
+
+```bash
+docker build -t nordata/label-studio:v1.7.3-tgmc .
+```
