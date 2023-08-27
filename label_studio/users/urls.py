@@ -6,6 +6,7 @@ from django.conf.urls import url, include
 from django.urls import path, re_path
 from django.views.static import serve
 from rest_framework import routers
+from rest_framework_jwt.views import obtain_jwt_token
 
 from users import views, api
 
@@ -30,4 +31,5 @@ urlpatterns = [
     path('api/current-user/token', api.UserGetTokenAPI.as_view(), name='current-user-token'),
 
     path('api/current-user/whoami', api.UserWhoAmIAPI.as_view(), name='current-user-whoami'),
+    url(r'^api/access-token$', obtain_jwt_token)
 ]

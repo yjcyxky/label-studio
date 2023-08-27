@@ -3592,11 +3592,15 @@ body {
   grid-gap: 32px;
   grid-auto-rows: 1fr;
   grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 .ls-projects-page__link {
   color: #000;
   display: block;
   display: flex;
+  width: 300px;
   text-decoration: none;
 }
 .ls-projects-page__link:hover {

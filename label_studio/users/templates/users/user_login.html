@@ -5,6 +5,15 @@
     {% csrf_token %}
     <p><input type="text" class="ls-input" name="email" id="email" placeholder="Email" value="{{ form.data.email }}"></p>
     <p><input type="password" class="ls-input" name="password" id="password" placeholder="Password"></p>
+    <div>
+      <!--A selector for organization-->
+      <select class="ls-input" name="organization" id="organization" style="width: 100%; padding: 0px 10px 0px 10px;" required>
+        <option value="" selected="selected">Select an organization</option>
+        {% for organization in organizations %}
+          <option value="{{ organization.id }}">{{ organization.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
     {% if form.non_field_errors %}
       {% for error in form.non_field_errors %}
         <p class="error">

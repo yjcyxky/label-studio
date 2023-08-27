@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { LsPlus } from "../../../assets/icons";
+import { LsBulb } from "../../../assets/icons";
 import { Button } from "../../../components";
 import { Description } from "../../../components/Description/Description";
 import { Input } from "../../../components/Form";
@@ -8,6 +9,7 @@ import { Space } from "../../../components/Space/Space";
 import { useAPI } from "../../../providers/ApiProvider";
 import { useConfig } from "../../../providers/ConfigProvider";
 import { Block, Elem } from "../../../utils/bem";
+import { useCurrentUser } from '../../../providers/CurrentUser';
 import { copyText } from "../../../utils/helpers";
 import "./PeopleInvitation.styl";
 import { PeopleList } from "./PeopleList";
@@ -35,6 +37,9 @@ export const PeoplePage = () => {
   const inviteModal = useRef();
   const config = useConfig();
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isSuperuser, setIsSuperuser] = useState(false);
+  // if not set, the people list page will not get the corrected organization id
+  const { user } = useCurrentUser();
 
   const [link, setLink] = useState();
 
@@ -60,7 +65,7 @@ export const PeoplePage = () => {
     title: "Invite people",
     style: { width: 640, height: 472 },
     body: () => (
-      <InvitationModal link={link}/>
+      <InvitationModal link={link} />
     ),
     footer: () => {
       const [copied, setCopied] = useState(false);
@@ -93,6 +98,10 @@ export const PeoplePage = () => {
     inviteModal.current = modal(inviteModalProps(link));
   }, [inviteModalProps, link]);
 
+  const redirectToAdminPage = useCallback(() => {
+    window.location.href = '/admin';
+  }, []);
+
   const defaultSelected = useMemo(() => {
     return localStorage.getItem('selectedUser');
   }, []);
@@ -102,6 +111,10 @@ export const PeoplePage = () => {
       setInviteLink(invite_url);
     });
   }, []);
+
+  useEffect(() => {
+    setIsSuperuser(user?.is_superuser);
+  }, [user]);
 
   useEffect(() => {
     inviteModal.current?.update(inviteModalProps(link));
@@ -114,14 +127,20 @@ export const PeoplePage = () => {
           <Space></Space>
 
           <Space>
-            <Button icon={<LsPlus/>} primary onClick={showInvitationModal}>
+            <Button icon={<LsPlus />} primary onClick={showInvitationModal}>
               Add People
             </Button>
+            {isSuperuser && (
+              <Button icon={<LsBulb />} primary onClick={redirectToAdminPage}>
+                Admin
+              </Button>
+            )}
           </Space>
         </Space>
       </Elem>
       <Elem name="content">
         <PeopleList
+          currentUser={user}
           selectedUser={selectedUser}
           defaultSelected={defaultSelected}
           onSelect={(user) => selectUser(user)}

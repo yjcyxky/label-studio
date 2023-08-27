@@ -49,7 +49,7 @@ def check_avatar(files):
     return avatar
 
 
-def save_user(request, next_page, user_form):
+def save_user(request, next_page, user_form, organization=None):
     """ Save user instance to DB
     """
     user = user_form.save()
@@ -57,10 +57,13 @@ def save_user(request, next_page, user_form):
     user.save()
 
     if Organization.objects.exists():
-        org = Organization.objects.first()
+        if not organization:
+            org = Organization.objects.first()
+        else:
+            org = organization
         org.add_user(user)
     else:
-        org = Organization.create_organization(created_by=user, title='Label Studio')
+        org = Organization.create_organization(created_by=user, title='Prophet Studio')
     user.active_organization = org
     user.save(update_fields=['active_organization'])
 
@@ -73,12 +76,12 @@ def save_user(request, next_page, user_form):
     return redirect(redirect_url)
 
 
-def proceed_registration(request, user_form, organization_form, next_page):
+def proceed_registration(request, user_form, organization, next_page):
     """ Register a new user for POST user_signup
     """
     # save user to db
     save_user = load_func(settings.SAVE_USER)
-    response = save_user(request, next_page, user_form)
+    response = save_user(request, next_page, user_form, organization)
 
     return response
 

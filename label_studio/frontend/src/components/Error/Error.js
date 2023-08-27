@@ -6,7 +6,7 @@ import { Button } from '../Button/Button';
 import { Space } from '../Space/Space';
 import "./Error.styl";
 
-const SLACK_INVITE_URL = "https://slack.labelstudio.heartex.com/?source=product-error-msg";
+const SLACK_INVITE_URL = "https://prophetdb.org";
 
 export const ErrorWrapper = ({title, message, errorId, stacktrace, validation, version, onGoBack, onReload, possum = false}) => {
   const preparedStackTrace = useMemo(() => {
@@ -77,7 +77,7 @@ export const ErrorWrapper = ({title, message, errorId, stacktrace, validation, v
       <Elem name="actions">
         <Space spread>
           <Elem tag={Button} name="action-slack" target="_blank" icon={<LsSlack/>} href={SLACK_INVITE_URL}>
-            Ask on Slack
+            Ask on ProphetDB
           </Elem>
 
           <Space size="small">

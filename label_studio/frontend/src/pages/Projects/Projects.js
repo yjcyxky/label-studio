@@ -25,6 +25,8 @@ const getCurrentPage = () => {
 export const ProjectsPage = () => {
   const api = React.useContext(ApiContext);
   const abortController = useAbortController();
+  const [organizationsList, setOrganizationsList] = React.useState([]);
+  const [isCreatorOrSuperuser, setIsCreatorOrSuperuser] = React.useState(false);
   const [projectsList, setProjectsList] = React.useState([]);
   const [networkState, setNetworkState] = React.useState(null);
   const [currentPage, setCurrentPage] = useState(getCurrentPage());
@@ -38,6 +40,20 @@ export const ProjectsPage = () => {
   const { user } = useCurrentUser();
 
   console.log('ProjectsPage', user);
+
+  // Get all organizations and pick up the created user's organization
+  const fecthOrganizations = async (page = currentPage, pageSize = defaultPageSize) => {
+    setNetworkState('loading');
+    abortController.renew(); // Cancel any in flight requests
+
+    const requestParams = { page, page_size: pageSize };
+    const data = await api.callApi("organizations", {
+      params: requestParams,
+    });
+
+    setNetworkState('loaded');
+    setOrganizationsList(data ?? []);
+  };
 
   const fetchProjects = async (page = currentPage, pageSize = defaultPageSize) => {
     setNetworkState('loading');
@@ -88,14 +104,34 @@ export const ProjectsPage = () => {
   };
 
   React.useEffect(() => {
+    fecthOrganizations();
     fetchProjects();
   }, []);
 
   React.useEffect(() => {
+    console.log('organizationsList', organizationsList, user);
+    if (organizationsList && user) {
+      const filteredItem = organizationsList.find((item) => item.created_by === user.id);
+
+      console.log('filteredItem', filteredItem);
+
+      if (filteredItem) {
+        setIsCreatorOrSuperuser(true);
+      } else {
+        if (user && user.is_superuser) {
+          setIsCreatorOrSuperuser(true);
+        } else {
+          setIsCreatorOrSuperuser(false);
+        }
+      }
+    }
+  }, [organizationsList, user]);
+
+  React.useEffect(() => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 && user && user.is_superuser });
-  }, [projectsList.length, user]);
+    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser });
+  }, [projectsList.length, isCreatorOrSuperuser, user]);
 
   return (
     <Block name="projects-page">
@@ -111,12 +147,12 @@ export const ProjectsPage = () => {
               totalItems={totalItems}
               loadNextPage={loadNextPage}
               pageSize={defaultPageSize}
-              showSettings={user && user.is_superuser}
+              showSettings={isCreatorOrSuperuser}
             />
           ) : (
-            <EmptyProjectsList openModal={openModal} showButton={user && user.is_superuser} />
+              <EmptyProjectsList openModal={openModal} showButton={isCreatorOrSuperuser} />
           )}
-          {(modal && user.is_superuser) && <CreateProject onClose={closeModal} />}
+          {(modal && isCreatorOrSuperuser) && <CreateProject onClose={closeModal} />}
         </Elem>
       </Oneof>
     </Block>

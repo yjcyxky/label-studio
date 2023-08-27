@@ -15,7 +15,7 @@ from core.utils.common import load_func
 from users.functions import login
 from core.middleware import enforce_csrf_checks
 from users.functions import proceed_registration
-from organizations.models import Organization
+from organizations.models import Organization, OrganizationMember
 from organizations.forms import OrganizationSignupForm
 
 
@@ -49,7 +49,12 @@ def user_signup(request):
 
     # make a new user
     if request.method == 'POST':
-        organization = Organization.objects.first()
+        organization_pk = request.POST.get('organization')
+        if organization_pk:
+            organization = Organization.objects.get(pk=organization_pk)
+        else:
+            organization = Organization.objects.first()
+
         if settings.DISABLE_SIGNUP_WITHOUT_LINK is True:
             if not(token and organization and token == organization.token):
                 raise PermissionDenied()
@@ -58,10 +63,11 @@ def user_signup(request):
                 raise PermissionDenied()
 
         user_form = forms.UserSignupForm(request.POST)
-        organization_form = OrganizationSignupForm(request.POST)
+        # Don't need to create organization
+        # organization_form = OrganizationSignupForm(request.POST)
 
         if user_form.is_valid():
-            redirect_response = proceed_registration(request, user_form, organization_form, next_page)
+            redirect_response = proceed_registration(request, user_form, organization, next_page)
             if redirect_response:
                 return redirect_response
 
@@ -70,6 +76,7 @@ def user_signup(request):
         'organization_form': organization_form,
         'next': next_page,
         'token': token,
+        'organizations': Organization.objects.all(),
     })
 
 
@@ -83,10 +90,12 @@ def user_login(request):
     login_form = load_func(settings.USER_LOGIN_FORM)
     form = login_form()
 
+
     if user.is_authenticated:
         return redirect(next_page)
-
+            
     if request.method == 'POST':
+        organization_pk = request.POST.get('organization')
         form = login_form(request.POST)
         if form.is_valid():
             user = form.cleaned_data['user']
@@ -96,15 +105,38 @@ def user_login(request):
                 request.session['keep_me_logged_in'] = False
                 request.session.set_expiry(0)
 
-            # user is organization member
-            org_pk = Organization.find_by_user(user).pk
-            user.active_organization_id = org_pk
-            user.save(update_fields=['active_organization'])
-            return redirect(next_page)
+        # https://github.com/HumanSignal/label-studio/discussions/2459#discussioncomment-6720923
+        # There is no organization for superuser
+        if user.is_superuser:
+            if organization_pk:
+                try:
+                    org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
+                except OrganizationMember.DoesNotExist:
+                    pass
+            
+            if not organization_pk or not org_pk:
+                org_pk = Organization.objects.first()
+
+            if org_pk:
+                user.active_organization_id = org_pk
+                user.save(update_fields=['active_organization'])
+                return redirect(next_page)
+        else:
+            if organization_pk:
+                try:
+                    org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
+                    print('User login: %s', user, organization_pk, org_pk)
+                    user.active_organization_id = org_pk
+                    user.save(update_fields=['active_organization'])
+                    return redirect(next_page)
+                except OrganizationMember.DoesNotExist:
+                    logout(request)
+                    raise PermissionDenied("User is not a member of this organization")
 
     return render(request, 'users/user_login.html', {
         'form': form,
-        'next': next_page
+        'next': next_page,
+        'organizations': Organization.objects.all(),
     })
 
 

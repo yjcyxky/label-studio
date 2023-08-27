@@ -9,6 +9,9 @@ pip install -e .
 python label_studio/manage.py migrate
 # Start the server in development mode at http://localhost:8080
 python label_studio/manage.py runserver
+
+# Clean up the database (macosx)
+rm /Users/<username>/Library/Application\ Support/label-studio/label_studio.sqlite3
 ```
 
 ### Apply frontend changes

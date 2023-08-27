@@ -13,7 +13,8 @@ from collections import OrderedDict
 class OrganizationIdSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     class Meta:
         model = Organization
-        fields = ['id', 'title']
+        # Need the created_by field to check if the user is the owner of the organization
+        fields = ['id', 'title', 'created_by']
 
 
 class OrganizationSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

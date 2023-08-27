@@ -18,6 +18,7 @@ from label_studio.core.permissions import all_permissions, ViewClassPermission
 from label_studio.core.utils.params import bool_from_request
 
 from organizations.models import Organization
+from users.models import User
 from organizations.serializers import (
     OrganizationSerializer, OrganizationIdSerializer, OrganizationMemberUserSerializer, OrganizationInviteSerializer,
     OrganizationsParamsSerializer
@@ -113,6 +114,40 @@ class OrganizationMemberListAPI(generics.ListAPIView):
             return org.members.order_by('user__username')
         else:
             return org.members.order_by('user__username')
+
+# Added by Jingcheng Yang for removing unwanted members from the organization
+@method_decorator(name='delete', decorator=swagger_auto_schema(
+        tags=['Organizations'],
+        operation_summary='Delete organization member',
+        operation_description='Delete a member from an organization.',
+        manual_parameters=[
+            openapi.Parameter(
+                name='id',
+                type=openapi.TYPE_INTEGER,
+                in_=openapi.IN_PATH,
+                description='A unique integer value identifying this organization.'),
+        ],
+    ))
+class OrganizationMemberDeleteAPI(generics.DestroyAPIView):
+
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
+    permission_required = ViewClassPermission(
+        GET=all_permissions.organizations_view,
+        PUT=all_permissions.organizations_change,
+        PATCH=all_permissions.organizations_change,
+        DELETE=all_permissions.organizations_change,
+    )
+    serializer_class = OrganizationMemberUserSerializer   
+    def delete(self, request, *args, **kwargs):
+        org = generics.get_object_or_404(Organization, pk=self.kwargs[self.lookup_field])
+        # Get user id from the path, '<int:pk>/memberships/<int:user_id>'
+        user_id = self.kwargs['user_id']
+        user = generics.get_object_or_404(User, pk=user_id)
+        if user.id == org.created_by:
+            return Response({'detail': 'You cannot remove yourself from the organization.'}, status=400)
+
+        org.organizationmember_set.filter(user=user).delete()
+        return Response(status=204)
 
 
 @method_decorator(name='get', decorator=swagger_auto_schema(

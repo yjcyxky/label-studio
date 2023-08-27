@@ -6,8 +6,12 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def organization_people_list(request):
-    return render(request, 'organizations/people_list.html')
+    user = request.user
+    organization_id = user.active_organization_id
+    return render(request, 'organizations/people_list.html', {'organization_id': organization_id})
 
 @login_required
 def simple_view(request):
-    return render(request, 'organizations/people_list.html')
+    user = request.user
+    organization_id = user.active_organization_id
+    return render(request, 'organizations/people_list.html', {'organization_id': organization_id})

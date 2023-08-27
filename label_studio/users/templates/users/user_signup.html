@@ -27,8 +27,19 @@
           {% endfor %}
         </ul>
       {% endif %}
-      </div>
+    </div>
 
+    <div>
+      <!--A selector for organization-->
+      <select class="ls-input" name="organization" id="organization" style="width: 100%; padding: 0px 10px 0px 10px;" required>
+        <option value="" selected="selected">Select an organization</option>
+        {% for organization in organizations %}
+          <option value="{{ organization.id }}">{{ organization.title }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!--
     <div>
       <input name="allow_newsletters" id="allow_newsletters" type="hidden" value="true">
       <label for="allow_newsletters_visual" style="display: inline-block; cursor: pointer;">
@@ -42,6 +53,7 @@
 
       </label>
     </div>
+    -->
 
     {% if form.non_field_errors %}
       {% for error in form.non_field_errors %}
