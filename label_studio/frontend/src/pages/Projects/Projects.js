@@ -179,6 +179,12 @@ ProjectsPage.routes = ({ store }) => [
   },
 ];
 ProjectsPage.context = ({ openModal, showButton }) => {
-  if (!showButton) return null;
-  return <Button onClick={openModal} look="primary" size="compact">Create</Button>;
+  const openPublicationManager = () => {
+    window.open('https://publications.3steps.cn', '_blank');
+  };
+
+  return <div>
+    {showButton && <Button onClick={openModal} look="primary" size="compact">Create</Button>}
+    <Button style={{ marginLeft: '5px' }} onClick={openPublicationManager} look="primary" size="compact">Publication Manager</Button>
+  </div>;
 };
