@@ -112,14 +112,13 @@ def user_login(request):
         # https://github.com/HumanSignal/label-studio/discussions/2459#discussioncomment-6720923
         # There is no organization for superuser
         if user.is_superuser:
+            org_pk = Organization.objects.first().pk
             if organization_pk:
                 try:
                     org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
                 except OrganizationMember.DoesNotExist:
-                    pass
-            
-            if not organization_pk or not org_pk:
-                org_pk = Organization.objects.first()
+                    org_member = OrganizationMember.objects.create(user=user, organization_id=organization_pk)
+                    org_pk = org_member.organization.pk
 
             if org_pk:
                 user.active_organization_id = org_pk
