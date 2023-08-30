@@ -47,8 +47,9 @@ class OrganizationListAPI(generics.ListCreateAPIView):
     )
     serializer_class = OrganizationIdSerializer
 
-    def filter_queryset(self, queryset):
-        return queryset.filter(users=self.request.user).distinct()
+    # Don't filter by user
+    # def filter_queryset(self, queryset):
+        # return queryset.filter(users=self.request.user).distinct()
 
     def get(self, request, *args, **kwargs):
         return super(OrganizationListAPI, self).get(request, *args, **kwargs)
