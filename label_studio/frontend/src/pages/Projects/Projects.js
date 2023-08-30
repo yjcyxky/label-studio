@@ -15,6 +15,7 @@ import { DataManagerPage } from '../DataManager/DataManager';
 import { SettingsPage } from '../Settings';
 import './Projects.styl';
 import { EmptyProjectsList, ProjectsList } from './ProjectsList';
+import { confirm } from "../../components/Modal/Modal";
 
 const getCurrentPage = () => {
   const pageNumberFromURL = new URLSearchParams(location.search).get("page");
@@ -130,7 +131,7 @@ export const ProjectsPage = () => {
   React.useEffect(() => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser });
+    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser, user });
   }, [projectsList.length, isCreatorOrSuperuser, user]);
 
   return (
@@ -150,7 +151,7 @@ export const ProjectsPage = () => {
               showSettings={isCreatorOrSuperuser}
             />
           ) : (
-              <EmptyProjectsList openModal={openModal} showButton={isCreatorOrSuperuser} />
+            <EmptyProjectsList openModal={openModal} showButton={isCreatorOrSuperuser} />
           )}
           {(modal && isCreatorOrSuperuser) && <CreateProject onClose={closeModal} />}
         </Elem>
@@ -178,13 +179,37 @@ ProjectsPage.routes = ({ store }) => [
     },
   },
 ];
-ProjectsPage.context = ({ openModal, showButton }) => {
-  const openPublicationManager = () => {
-    window.open('https://publications.3steps.cn', '_blank');
+ProjectsPage.context = ({ openModal, showButton, user }) => {
+  const openPublicationManager = (user) => {
+    confirm({
+      width: 500,
+      title: "Open Publication Manager",
+      body: <p>
+        Please refer your credentials for the Publication Manager:
+        <br />
+        <pre>
+          Account: {user.email}
+          <br />
+          Password: {user.minio_token}
+        </pre>
+        <br />
+        Do you want to continue?
+      </p>,
+      okText: "Comfirm",
+      onOk: () => {
+        const MINIO_STORAGE_ENDPOINT = window.MINIO_STORAGE_ENDPOINT || 'http://localhost:9000';
+        window.open(MINIO_STORAGE_ENDPOINT, '_blank');
+      },
+      cancelText: "Cancel",
+      onCancel: () => { },
+    }, []);
   };
 
   return <div>
     {showButton && <Button onClick={openModal} look="primary" size="compact">Create</Button>}
-    <Button style={{ marginLeft: '5px' }} onClick={openPublicationManager} look="primary" size="compact">Publication Manager</Button>
+    <Button style={{ marginLeft: '5px' }} onClick={() => openPublicationManager(user)}
+      disabled={window.MINIO_STORAGE_ENDPOINT} look="primary" size="compact">
+      Publication Manager
+    </Button>
   </div>;
 };

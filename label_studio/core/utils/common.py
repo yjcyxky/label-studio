@@ -441,6 +441,14 @@ def collect_versions(force=False):
     except:
         pass
 
+    # kge
+    try:
+        with open(os.path.join(settings.KGE_ROOT, 'version.json')) as f:
+            kge = json.load(f)
+        result['kge'] = kge
+    except:
+        pass
+
     # converter
     try:
         import label_studio_converter

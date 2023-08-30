@@ -443,6 +443,8 @@ EDITOR_ROOT = os.path.join(BASE_DIR, '../frontend/dist/lsf')
 DM_ROOT = os.path.join(BASE_DIR, '../frontend/dist/dm')
 # FRONTEND = GUI for django backend
 REACT_APP_ROOT = os.path.join(BASE_DIR, '../frontend/dist/react-app')
+# KGE = knowledge graph editor, https://github.com/yjcyxky/knowledge-graph-editor
+KGE_ROOT = os.path.join(BASE_DIR, '../frontend/dist/kge')
 
 # per project settings
 BATCH_SIZE = 1000
@@ -611,6 +613,7 @@ CSRF_TRUSTED_ORIGINS = get_env('CSRF_TRUSTED_ORIGINS', [])
 if CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(",")
 
+KNOWLEDGE_GRAPH_SERVER = get_env('KNOWLEDGE_GRAPH_SERVER', 'https://prophetdb.3steps.cn')
 DEFAULT_JWT_SECRET_KEY = 'my-secret-key'
 JWT_AUTH = {
     'JWT_SECRET_KEY': get_env('JWT_SECRET_KEY', DEFAULT_JWT_SECRET_KEY),

@@ -21,6 +21,7 @@ from core.permissions import all_permissions, ViewClassPermission
 from users.models import User
 from users.serializers import UserSerializer
 from users.functions import check_avatar
+import hashlib
 
 
 logger = logging.getLogger(__name__)
@@ -222,4 +223,11 @@ class UserWhoAmIAPI(generics.RetrieveAPIView):
         return self.request.user
 
     def get(self, request, *args, **kwargs):
-        return super(UserWhoAmIAPI, self).get(request, *args, **kwargs)
+        user_response = super(UserWhoAmIAPI, self).get(request, *args, **kwargs)
+        print(user_response.data)
+        user = user_response.data
+        email = user.get("email")
+        userid = user.get("id")
+        minio_token = hashlib.md5(f'{email}:{userid}'.encode()).hexdigest()
+        user_response.data["minio_token"] = minio_token
+        return user_response
