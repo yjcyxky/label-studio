@@ -131,7 +131,8 @@ export const ProjectsPage = () => {
   React.useEffect(() => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
-    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser, user });
+    console.log("PUBLICATION_MANAGER_SERVER: ", window.PUBLICATION_MANAGER_SERVER);
+    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser, user, publication_manager_server: window.PUBLICATION_MANAGER_SERVER });
   }, [projectsList.length, isCreatorOrSuperuser, user]);
 
   return (
@@ -179,26 +180,27 @@ ProjectsPage.routes = ({ store }) => [
     },
   },
 ];
-ProjectsPage.context = ({ openModal, showButton, user }) => {
+ProjectsPage.context = ({ openModal, showButton, user, publication_manager_server }) => {
   const openPublicationManager = (user) => {
     confirm({
       width: 500,
       title: "Open Publication Manager",
-      body: <p>
+      body: <div>
         Please refer your credentials for the Publication Manager:
         <br />
         <pre>
+          Website: {publication_manager_server}
+          <br />
           Account: {user.email}
           <br />
           Password: {user.minio_token}
         </pre>
         <br />
         Do you want to continue?
-      </p>,
+      </div>,
       okText: "Comfirm",
       onOk: () => {
-        const MINIO_STORAGE_ENDPOINT = window.MINIO_STORAGE_ENDPOINT || 'http://localhost:9000';
-        window.open(MINIO_STORAGE_ENDPOINT, '_blank');
+        window.open(publication_manager_server, '_blank');
       },
       cancelText: "Cancel",
       onCancel: () => { },
@@ -208,7 +210,7 @@ ProjectsPage.context = ({ openModal, showButton, user }) => {
   return <div>
     {showButton && <Button onClick={openModal} look="primary" size="compact">Create</Button>}
     <Button style={{ marginLeft: '5px' }} onClick={() => openPublicationManager(user)}
-      disabled={window.MINIO_STORAGE_ENDPOINT} look="primary" size="compact">
+      disabled={!publication_manager_server} look="primary" size="compact">
       Publication Manager
     </Button>
   </div>;

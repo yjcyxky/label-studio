@@ -45,7 +45,7 @@ If you want to use the label studio with new user's settings, you must change th
 
 1. `JWT_SECRET_KEY`: a secret key for signing the JWT token. You can change it with setting `JWT_SECRET_KEY` environment variable.
 
-2. `MINIO_STORAGE_ENDPOINT`: a host name of the Minio server. You can change it with setting `MINIO_STORAGE_ENDPOINT` environment variable. Also you must change the `MINIO_STORAGE_BUCKET_NAME`, `MINIO_STORAGE_ACCESS_KEY` and `MINIO_STORAGE_SECRET_KEY` environment variables. If you didn't set the `MINIO_STORAGE_ENDPOINT` environment variable, the `Publication Manager` button will be disabled.
+2. `PUBLICATION_MANAGER_SERVER`: a host name of the Minio server. You can change it with setting `PUBLICATION_MANAGER_SERVER` environment variable. If you didn't set the `PUBLICATION_MANAGER_SERVER` environment variable, the `Publication Manager` button will be disabled.
 
 3. `KNOWLEDGE_GRAPH_SERVER`: a host name of the Knowledge Graph server. You can change it with setting `KNOWLEDGE_GRAPH_SERVER` environment variable.
 
