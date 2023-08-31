@@ -47,9 +47,10 @@ class OrganizationListAPI(generics.ListCreateAPIView):
     )
     serializer_class = OrganizationIdSerializer
 
-    # Don't filter by user
-    # def filter_queryset(self, queryset):
-        # return queryset.filter(users=self.request.user).distinct()
+    def filter_queryset(self, queryset):
+        if self.request.user.is_superuser:
+            return queryset
+        return queryset.filter(users=self.request.user).distinct()
 
     def get(self, request, *args, **kwargs):
         return super(OrganizationListAPI, self).get(request, *args, **kwargs)
@@ -101,6 +102,10 @@ class OrganizationMemberListAPI(generics.ListAPIView):
         }
 
     def get_queryset(self):
+        if self.request.user.is_superuser:
+            org = generics.get_object_or_404(Organization, pk=self.kwargs[self.lookup_field])
+            return org.members.order_by('user__username')
+
         org = generics.get_object_or_404(self.request.user.organizations, pk=self.kwargs[self.lookup_field])
         if flag_set('fix_backend_dev_3134_exclude_deactivated_users', self.request.user):
             serializer = OrganizationsParamsSerializer(data=self.request.GET)
