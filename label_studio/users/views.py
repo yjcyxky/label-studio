@@ -108,40 +108,43 @@ def user_login(request):
                 request.session['keep_me_logged_in'] = False
                 request.session.set_expiry(0)
 
-        response = None
-        # https://github.com/HumanSignal/label-studio/discussions/2459#discussioncomment-6720923
-        # There is no organization for superuser
-        if user.is_superuser:
-            org_pk = Organization.objects.first().pk
-            if organization_pk:
-                try:
-                    org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
-                except OrganizationMember.DoesNotExist:
-                    org_member = OrganizationMember.objects.create(user=user, organization_id=organization_pk)
-                    org_pk = org_member.organization.pk
+        print('User login: ', form, user, organization_pk)
 
-            if org_pk:
-                user.active_organization_id = org_pk
-                user.save(update_fields=['active_organization'])
-                response = redirect(next_page)
-        else:
-            if organization_pk:
-                try:
-                    org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
-                    print('User login: %s', user, organization_pk, org_pk)
+        if user.is_authenticated:
+            response = None
+            # https://github.com/HumanSignal/label-studio/discussions/2459#discussioncomment-6720923
+            # There is no organization for superuser
+            if user.is_superuser:
+                org_pk = Organization.objects.first().pk
+                if organization_pk:
+                    try:
+                        org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
+                    except OrganizationMember.DoesNotExist:
+                        org_member = OrganizationMember.objects.create(user=user, organization_id=organization_pk)
+                        org_pk = org_member.organization.pk
+
+                if org_pk:
                     user.active_organization_id = org_pk
                     user.save(update_fields=['active_organization'])
                     response = redirect(next_page)
-                except OrganizationMember.DoesNotExist:
-                    logout(request)
-                    raise PermissionDenied("User is not a member of this organization")
-                
-        if response:
-            jwt_response = obtain_jwt_token(request)
-            jwt_access_token = jwt_response.data.get("token")
-            print('JWT access token: ', dir(jwt_response), jwt_response.cookies, jwt_response.data)
-            response.set_cookie('jwt_access_token', jwt_access_token, httponly=False, samesite='Lax')
-            return response
+            else:
+                if organization_pk:
+                    try:
+                        org_pk = OrganizationMember.find_by_user(user, organization_pk).organization.pk
+                        print('User login: %s', user, organization_pk, org_pk)
+                        user.active_organization_id = org_pk
+                        user.save(update_fields=['active_organization'])
+                        response = redirect(next_page)
+                    except OrganizationMember.DoesNotExist:
+                        logout(request)
+                        raise PermissionDenied("User is not a member of this organization")
+                    
+            if response:
+                jwt_response = obtain_jwt_token(request)
+                jwt_access_token = jwt_response.data.get("token")
+                print('JWT access token: ', dir(jwt_response), jwt_response.cookies, jwt_response.data)
+                response.set_cookie('jwt_access_token', jwt_access_token, httponly=False, samesite='Lax')
+                return response
 
     return render(request, 'users/user_login.html', {
         'form': form,
