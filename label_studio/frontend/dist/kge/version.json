@@ -1,6 +1,6 @@
 {
-  "message": "Improve the auth process.",
-  "commit": "a82da30e146f7107fbcee38206f4848af0e275f9",
+  "message": "Store the project_id and organization_id with curated findings.",
+  "commit": "c59f4bd13ef2331a5101ce91d615a3c9770a1adf",
   "branch": "main",
-  "date": "2023-09-10T16:43:26.323Z"
+  "date": "2023-09-12T23:17:08.518Z"
 }
