@@ -1,6 +1,6 @@
 {
-  "message": "Store the project_id and organization_id with curated findings.",
-  "commit": "c59f4bd13ef2331a5101ce91d615a3c9770a1adf",
+  "message": "Update the fetchNodes fn.",
+  "commit": "66f71643a2cb81f79448fcf2f25424edde6015c2",
   "branch": "main",
-  "date": "2023-09-12T23:17:08.518Z"
+  "date": "2023-09-13T03:45:19.044Z"
 }
