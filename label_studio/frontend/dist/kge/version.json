@@ -1,6 +1,6 @@
 {
-  "message": "Update the fetchNodes fn.",
-  "commit": "66f71643a2cb81f79448fcf2f25424edde6015c2",
+  "message": "Improve order of the fetched nodes",
+  "commit": "69ff204374338d54bf532ff1d3e7a18fa9f96359",
   "branch": "main",
-  "date": "2023-09-13T03:45:19.044Z"
+  "date": "2023-09-13T04:01:33.913Z"
 }
