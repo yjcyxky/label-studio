@@ -1,6 +1,6 @@
 {
-  "message": "Improve order of the fetched nodes",
-  "commit": "69ff204374338d54bf532ff1d3e7a18fa9f96359",
+  "message": "Cannot use the updated entity type.",
+  "commit": "70018adda1816523e0a6b6c61ffa3487de366d3d",
   "branch": "main",
-  "date": "2023-09-16T16:44:38.313Z"
+  "date": "2023-09-16T18:54:48.790Z"
 }
