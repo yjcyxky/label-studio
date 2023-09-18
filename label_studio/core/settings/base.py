@@ -613,6 +613,7 @@ CSRF_TRUSTED_ORIGINS = get_env('CSRF_TRUSTED_ORIGINS', [])
 if CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS = CSRF_TRUSTED_ORIGINS.split(",")
 
+# The KGE need the following settings, so we need to set them here and transfer them to the html file
 PUBLICATION_MANAGER_SERVER = get_env('PUBLICATION_MANAGER_SERVER', 'https://publications.3steps.cn')
 KNOWLEDGE_GRAPH_SERVER = get_env('KNOWLEDGE_GRAPH_SERVER', 'https://prophetdb.3steps.cn')
 DEFAULT_JWT_SECRET_KEY = 'my-secret-key'
@@ -630,8 +631,7 @@ JWT_AUTH = {
         'rest_framework_jwt.utils.jwt_encode_payload',
     'JWT_DECODE_HANDLER':
         'rest_framework_jwt.utils.jwt_decode_token',
-    'JWT_PAYLOAD_HANDLER':
-        'rest_framework_jwt.utils.jwt_create_payload',
+    'JWT_PAYLOAD_HANDLER': 'label_studio.users.functions.jwt_custom_payload_handler',
     'JWT_PAYLOAD_GET_USERNAME_HANDLER':
         'rest_framework_jwt.utils.jwt_get_username_from_payload_handler',
     'JWT_PAYLOAD_INCLUDE_USER_ID': True,
