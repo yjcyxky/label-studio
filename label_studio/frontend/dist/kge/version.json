@@ -1,6 +1,6 @@
 {
-  "message": "Allow to transfer page and page_size fields into the GraphTable component.",
-  "commit": "1b08103c1bff633d13f9cff55877f6fa2ad39e56",
+  "message": "Improve the error msg for auth function.",
+  "commit": "f75d7e88dd9c2b6151473444bcdf9735c6c214b0",
   "branch": "main",
-  "date": "2023-09-18T02:42:29.878Z"
+  "date": "2023-09-19T23:01:02.351Z"
 }
