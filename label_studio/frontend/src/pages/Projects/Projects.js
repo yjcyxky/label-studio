@@ -132,7 +132,16 @@ export const ProjectsPage = () => {
     // there is a nice page with Create button when list is empty
     // so don't show the context button in that case
     console.log("PUBLICATION_MANAGER_SERVER: ", window.PUBLICATION_MANAGER_SERVER);
-    setContextProps({ openModal, showButton: projectsList.length > 0 && isCreatorOrSuperuser, user, publication_manager_server: window.PUBLICATION_MANAGER_SERVER });
+    console.log("KNOWLEDGE_GRAPH_SERVER: ", window.KNOWLEDGE_GRAPH_SERVER);
+    console.log("HELP_DOC_SERVER: ", window.HELP_DOC_SERVER);
+    setContextProps({
+      openModal,
+      showButton: projectsList.length > 0 && isCreatorOrSuperuser,
+      user,
+      publication_manager_server: window.PUBLICATION_MANAGER_SERVER,
+      knowledge_graph_server: window.KNOWLEDGE_GRAPH_SERVER,
+      help_doc_server: window.HELP_DOC_SERVER,
+    });
   }, [projectsList.length, isCreatorOrSuperuser, user]);
 
   return (
@@ -180,7 +189,10 @@ ProjectsPage.routes = ({ store }) => [
     },
   },
 ];
-ProjectsPage.context = ({ openModal, showButton, user, publication_manager_server }) => {
+ProjectsPage.context = ({
+  openModal, showButton, user, publication_manager_server,
+  knowledge_graph_server, help_doc_server
+}) => {
   const openPublicationManager = (user) => {
     confirm({
       width: 500,
@@ -207,11 +219,22 @@ ProjectsPage.context = ({ openModal, showButton, user, publication_manager_serve
     }, []);
   };
 
-  return <div>
+  return <div style={{ display: 'flex' }}>
     {showButton && <Button onClick={openModal} look="primary" size="compact">Create</Button>}
-    <Button style={{ marginLeft: '5px' }} onClick={() => openPublicationManager(user)}
-      disabled={!publication_manager_server} look="primary" size="compact">
+    <Button style={{ marginLeft: '5px', display: !knowledge_graph_server ? 'none' : 'block' }}
+      onClick={() => window.open(knowledge_graph_server, '_blank')}
+      size="compact">
+      KG Studio
+    </Button>
+    <Button style={{ marginLeft: '5px', display: !publication_manager_server ? 'none' : 'block' }}
+      onClick={() => openPublicationManager(user)} size="compact">
       Publication Manager
+    </Button>
+    {/* Help Button */}
+    <Button style={{ marginLeft: '5px', display: !help_doc_server ? 'none' : 'block' }}
+      onClick={() => window.open(help_doc_server, '_blank')}
+      size="compact">
+      Help
     </Button>
   </div>;
 };

@@ -202,7 +202,7 @@ export const Menubar = ({
 
                 <Menu.Spacer/>
 
-                <VersionNotifier showNewVersion/>
+                {/* <VersionNotifier showNewVersion/> */}
 
                 {false && (
                   <>

@@ -143,7 +143,8 @@ def user_login(request):
                 jwt_response = obtain_jwt_token(request)
                 jwt_access_token = jwt_response.data.get("token")
                 print('JWT access token: ', dir(jwt_response), jwt_response.cookies, jwt_response.data)
-                response.set_cookie('jwt_access_token', jwt_access_token, httponly=False, samesite='Lax')
+                domain = settings.JWT_AUTH.get('JWT_AUTH_COOKIE_DOMAIN', None)
+                response.set_cookie('jwt_access_token', jwt_access_token, httponly=False, samesite='Lax', domain=domain)
                 return response
 
     return render(request, 'users/user_login.html', {

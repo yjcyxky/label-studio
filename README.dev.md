@@ -49,6 +49,8 @@ If you want to use the label studio with new user's settings, you must change th
 
 3. `KNOWLEDGE_GRAPH_SERVER`: a host name of the Knowledge Graph server. You can change it with setting `KNOWLEDGE_GRAPH_SERVER` environment variable.
 
+4. `HELP_DOC_SERVER`: a host name of the Help Doc server. You can change it with setting `HELP_DOC_SERVER` environment variable.
+
 ## How it works?
 
 ### How to integrate KGE into Label Studio?

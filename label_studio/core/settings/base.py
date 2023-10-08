@@ -615,7 +615,8 @@ if CSRF_TRUSTED_ORIGINS:
 
 # The KGE need the following settings, so we need to set them here and transfer them to the html file
 PUBLICATION_MANAGER_SERVER = get_env('PUBLICATION_MANAGER_SERVER', 'https://publications.3steps.cn')
-KNOWLEDGE_GRAPH_SERVER = get_env('KNOWLEDGE_GRAPH_SERVER', 'https://prophetdb.3steps.cn')
+KNOWLEDGE_GRAPH_SERVER = get_env('KNOWLEDGE_GRAPH_SERVER', 'https://prophetdb.3steps.cn/index.html#/knowledge-graph')
+HELP_DOC_SERVER = get_env('HELP_DOC_SERVER', 'https://docs.3steps.cn')
 DEFAULT_JWT_SECRET_KEY = 'my-secret-key'
 JWT_AUTH = {
     'JWT_SECRET_KEY': get_env('JWT_SECRET_KEY', DEFAULT_JWT_SECRET_KEY),
@@ -645,7 +646,7 @@ JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':
         'rest_framework_jwt.utils.jwt_create_response_payload',
     'JWT_AUTH_COOKIE': None,
-    'JWT_AUTH_COOKIE_DOMAIN': None,
+    'JWT_AUTH_COOKIE_DOMAIN': get_env('JWT_AUTH_COOKIE_DOMAIN', None),
     'JWT_AUTH_COOKIE_PATH': '/',
     'JWT_AUTH_COOKIE_SECURE': True,
     'JWT_AUTH_COOKIE_SAMESITE': 'Lax',

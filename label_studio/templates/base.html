@@ -30,11 +30,12 @@
   <script src="{{settings.HOSTNAME}}{% static 'js/helpers.js' %}"></script>
 
   <script>
-    KNOWLEDGE_GRAPH_SERVER = "{{settings.KNOWLEDGE_GRAPH_SERVER}}";
     EDITOR_JS = "{{settings.HOSTNAME}}/label-studio-frontend/js/main.js?v={{ versions.lsf.commit }}";
     EDITOR_CSS = "{{settings.HOSTNAME}}/label-studio-frontend/css/main.css?v={{ versions.lsf.commit }}";
     DM_JS = "{{settings.HOSTNAME}}/dm/js/main.js?v={{ versions.dm2.commit }}";
     DM_CSS = "{{settings.HOSTNAME}}/dm/css/main.css?v={{ versions.dm2.commit }}";
+    KNOWLEDGE_GRAPH_SERVER = "{{settings.KNOWLEDGE_GRAPH_SERVER}}";
+    HELP_DOC_SERVER = "{{settings.HELP_DOC_SERVER}}";
     PUBLICATION_MANAGER_SERVER = "{{settings.PUBLICATION_MANAGER_SERVER}}";
   </script>
 
