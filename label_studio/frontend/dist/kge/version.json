@@ -1,6 +1,6 @@
 {
-  "message": "Allow to logout automatically.",
-  "commit": "a01ab9bf8afe4c51d25d4a8ea5d1eb21bfa5a277",
+  "message": "[Fix Bug] Cannot logout correctly.",
+  "commit": "0847aff0ca54e7765cf31bb8562ae04b3eae3786",
   "branch": "main",
-  "date": "2023-10-08T16:28:49.967Z"
+  "date": "2023-10-08T17:14:33.581Z"
 }
