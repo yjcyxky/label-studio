@@ -31,7 +31,7 @@
 
     <div>
       <!--A selector for organization-->
-      <select class="ls-input" name="organization" id="organization" style="width: 100%; padding: 0px 10px 0px 10px;" required>
+      <select class="ls-input" name="organization" id="organization" style="width: 100%; padding: 0px 10px 0px 10px;">
         <option value="" selected="selected">Select an organization</option>
         {% for organization in organizations %}
           <option value="{{ organization.id }}">{{ organization.title }}</option>

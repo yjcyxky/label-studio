@@ -14,6 +14,7 @@ from rest_framework_jwt.views import obtain_jwt_token
 from users import forms
 from core.utils.common import load_func
 from users.functions import login
+from organizations.functions import check_add_organization
 from core.middleware import enforce_csrf_checks
 from users.functions import proceed_registration
 from organizations.models import Organization, OrganizationMember
@@ -117,38 +118,31 @@ def user_login(request):
             response = None
             # https://github.com/HumanSignal/label-studio/discussions/2459#discussioncomment-6720923
             # There is no organization for superuser
-            if user.is_superuser:
-                org_pk = Organization.objects.first().pk
-                if organization_pk:
-                    try:
-                        org_pk = OrganizationMember.find_by_user(
-                            user, organization_pk
-                        ).organization.pk
-                    except OrganizationMember.DoesNotExist:
+            if organization_pk:
+                try:
+                    org = OrganizationMember.find_by_user(
+                        user, organization_pk
+                    ).organization
+                except OrganizationMember.DoesNotExist:
+                    if user.is_superuser:
+                        # Connect user to the organization if he is a superuser
                         org_member = OrganizationMember.objects.create(
                             user=user, organization_id=organization_pk
                         )
-                        org_pk = org_member.organization.pk
-
-                if org_pk:
-                    user.active_organization_id = org_pk
-                    user.save(update_fields=["active_organization"])
-                    response = redirect(next_page)
-            else:
-                if organization_pk:
-                    try:
-                        org_pk = OrganizationMember.find_by_user(
-                            user, organization_pk
-                        ).organization.pk
-                        print("User login: %s", user, organization_pk, org_pk)
-                        user.active_organization_id = org_pk
-                        user.save(update_fields=["active_organization"])
-                        response = redirect(next_page)
-                    except OrganizationMember.DoesNotExist:
+                        org = org_member.organization
+                    else:
+                        # Don't allow to login if user is not a member of this organization
                         logout(request)
                         raise PermissionDenied(
                             "User is not a member of this organization"
                         )
+            else:
+                org = None
+
+            print("User login: %s", user, organization_pk, org)
+            # If user is not a member of any organization, add him to the default one
+            check_add_organization(user, "Default", organization=org)
+            response = redirect(next_page)
 
             if response:
                 jwt_response = obtain_jwt_token(request)

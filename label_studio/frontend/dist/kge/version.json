@@ -1,6 +1,6 @@
 {
-  "message": "[Fix Bug] Cannot access the KGE on Safari.",
-  "commit": "24d1f70698e4d2a9e2b48ec53cb5ea4dc17a22db",
+  "message": "Check id and type whether match.",
+  "commit": "04756decf3cf1987559146be04f926465e74f73e",
   "branch": "main",
-  "date": "2023-10-09T23:05:26.041Z"
+  "date": "2023-10-12T04:21:12.494Z"
 }

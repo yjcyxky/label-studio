@@ -18,3 +18,18 @@ def destroy_organization(org):
         if hasattr(org, 'saml'):
             org.saml.delete()
         org.delete()
+
+
+def check_add_organization(user, title, organization=None):
+    if Organization.objects.exists():
+        if not organization:
+            org = Organization.objects.filter(title=title).first()
+        else:
+            org = organization
+        org.add_user(user)
+    else:
+        org = Organization.create_organization(created_by=user, title=title)
+    user.active_organization = org
+    user.save(update_fields=["active_organization"])
+
+    return org.pk

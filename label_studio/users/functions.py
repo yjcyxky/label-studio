@@ -67,7 +67,7 @@ def save_user(request, next_page, user_form, organization=None):
             org = organization
         org.add_user(user)
     else:
-        org = Organization.create_organization(created_by=user, title="Prophet Studio")
+        org = Organization.create_organization(created_by=user, title="Default")
     user.active_organization = org
     user.save(update_fields=["active_organization"])
 
