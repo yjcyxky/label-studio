@@ -35,7 +35,7 @@ After that you can refresh the page and see the changes.
 ### Build a production-ready Docker image
 
 ```bash
-docker build -t nordata/label-studio:v1.7.3-tgmc .
+docker build -t nordata/label-studio:v1.7.3-tgmc-<commit_id> .
 ```
 
 ## Build a production
