@@ -1,6 +1,6 @@
 {
-  "message": "Skip validity checking of a node id when it is Unknown:Unknown.",
-  "commit": "765672166ba205619c37281cf2bd56c065386710",
+  "message": "Show metadata card for source_id and target_id.",
+  "commit": "142404ad2182ba9ecc8f56873cc01f2b068ce114",
   "branch": "main",
-  "date": "2023-10-13T00:55:00.304Z"
+  "date": "2023-10-14T19:30:34.343Z"
 }
