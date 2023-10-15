@@ -1,6 +1,6 @@
 {
-  "message": "Show metadata card for source_id and target_id.",
-  "commit": "142404ad2182ba9ecc8f56873cc01f2b068ce114",
+  "message": "[Fix Bug] Improve styles for placing the popover component correctly.",
+  "commit": "95f56191265fd4246eb9e9254a04bf0577a50bbe",
   "branch": "main",
-  "date": "2023-10-14T19:30:34.343Z"
+  "date": "2023-10-15T01:25:24.469Z"
 }
